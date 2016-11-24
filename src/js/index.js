@@ -3,13 +3,16 @@ import ReactDom from 'react-dom';
 
 
 var SearchBar = React.createClass({
+    onHandleFilter: function () {
+        this.props.filterTextShow(this.refs.inp.value);
+    },
     render: function () {
         return (
             <div>
-                <input type="text"/>
+                <input type="text" onChange={this.onHandleFilter} ref='inp'/>
                 <br/>
                 <span>only show stocked</span>
-                <input type="checkbox"/>
+                <input type="checkbox" onClick={this.props.changeShow}/>
             </div>
         )
     }
@@ -25,8 +28,14 @@ var ProductCategoryRow = React.createClass({
 })
 var ProductRow = React.createClass({
     render: function () {
+        var styles = {};
+        if (this.props.stocked) {
+            styles.color = 'black';
+        }else {
+            styles.color = 'red';
+        }
         return (
-            <tr>
+            <tr style={styles}>
                 <td>{this.props.name}</td>
                 <td>{this.props.price}</td>
             </tr>
@@ -39,14 +48,21 @@ var ProductTable = React.createClass({
         var products = this.props.products;
         var row = [];
         var last = null;
-        console.log(products)
+        var onlyShowStocked = this.props.onlyShowStocked;
+        var filterText = this.props.filterText;
+        console.log(onlyShowStocked)
         products.forEach(function (ele, index) {
             if (last !== ele.category) {
                 last = ele.category;
                 row.push(<ProductCategoryRow key={index + 100} category={ele.category}></ProductCategoryRow>)
             }
-            row.push(<ProductRow key={index} name={ele.name} price={ele.price}></ProductRow>)
-
+            // 只显示有存货的 我们需判断以下 那些没有存货 那么这些我们就不加 ，反之酒家
+            console.log(onlyShowStocked);
+            if ( !(onlyShowStocked && !ele.stocked) ) {
+                if (ele.name.indexOf(filterText) !== -1) {
+                    row.push(<ProductRow key={index} stocked={ele.stocked} name={ele.name} price={ele.price}></ProductRow>);
+                }
+            }
         })
         return (
             <table>
@@ -66,11 +82,27 @@ var ProductTable = React.createClass({
     }
 });
 var App = React.createClass({
+    getInitialState: function() {
+        return {
+            show: false,
+            filterText: '',
+        }
+    },
+    changeShow: function () {
+        this.setState({
+            show: !this.state.show
+        })
+    },  
+    filterTextShow: function (filterText) {
+        this.setState({
+            filterText: filterText
+        })
+    },
     render:function () {
         return (
             <div>
-                <SearchBar></SearchBar>
-                <ProductTable products={this.props.products}></ProductTable>
+                <SearchBar filterTextShow={this.filterTextShow} changeShow={this.changeShow}></SearchBar>
+                <ProductTable products={this.props.products} onlyShowStocked={this.state.show} filterText={this.state.filterText}></ProductTable>
             </div>
         )
     }
