@@ -39,7 +39,8 @@ var ProductTable = React.createClass({
         var products = this.props.products;
         var row = [];
         var last = null;
-        product.forEach(function (ele, index) {
+        console.log(products)
+        products.forEach(function (ele, index) {
             if (last !== ele.category) {
                 last = ele.category;
                 row.push(<ProductCategoryRow key={index + 100} category={ele.category}></ProductCategoryRow>)
@@ -74,10 +75,7 @@ var App = React.createClass({
         )
     }
 })
-ReactDom.render(
-    <App products={PRODUCTS}></App>,
-    document.getElementById('root')
-)
+
 
 var PRODUCTS = [
     {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
@@ -86,5 +84,9 @@ var PRODUCTS = [
     {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
     {category: 'Electronics', price: '$399.99', stocked: false, name: 'iWatch'},
     {category: 'Electronics', price: '$199.99', stocked: true, name: 'iPad'},
+];
 
-]
+ReactDom.render(
+    <App products={PRODUCTS}></App>,
+    document.getElementById('root')
+)
