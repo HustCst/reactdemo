@@ -1,6 +1,6 @@
 module.exports = {
     entry: {
-        index: './src/js/index.js'
+        index: './src/js/zhihu.js'
     },
     output: {
         // 资源目录放置 当前目录(根目录)  也就是说资源需要从根目录开始查找 
